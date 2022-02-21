@@ -1,0 +1,48 @@
+#library(devtools)
+#install_github("pablobarbera/Rfacebook/Rfacebook")
+library(Rfacebook)
+library(dplyr)
+library(lubridate)
+
+setwd("C:\Data") 
+fb_oauth <- fbOAuth(app_id="app_id", app_secret="app_secret",extended_permissions = TRUE)
+
+save(fb_oauth, file="fb_oauth")
+load("fb_oauth")
+
+me <- getUsers("xxxxxxxxxx",token=fb_oauth)
+
+
+pages = c("0000000001", "0000000002", "0000000003")
+
+
+all_operator_list = list()
+for(i in 1:length(pages)){
+  me_page_i = getPage(pages[i], fb_oauth, feed = T, n=10000, api = "v2.6", since = Sys.Date()-3, until = Sys.Date())
+  print(paste("done getting post for", pages[i]))
+
+
+  if(nrow(me_page_i)==0) next
+  me_page_i = me_page_i[,c(1,2,3,4,9,10,7)]
+  me_page_i$type = "wall_post"
+  comment = list()
+  print(paste("getting comments for", pages[i]))
+
+  for(j in 1:nrow(me_page_i)){
+    temp = getPost(me_page_i$id[j], token = fb_oauth, n=10000, likes = F)
+    comment[[j]] = temp$comments
+    cat(paste("Processed",j, "with", nrow(comment[[j]])))
+    cat("\n")
+  }
+  comment = bind_rows(comment)
+  comment$type = "comment"
+  allcomment = bind_rows(me_page_i,comment)
+
+  allcomment$operator = ifelse(pages[i]=="0000000001", "xxxxxx1",
+                             ifelse(pages[i] %in% c("0000000002","0000000003"), "xxxxxx2", "xxxxxx3"))
+
+
+  all_operator_list[[i]] = allcomment
+}
+
+all_operator = bind_rows(all_operator_list)
