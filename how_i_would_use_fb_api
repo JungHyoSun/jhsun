@@ -1,3 +1,19 @@
+/*
+Dear whom may it concerned,
+
+This is Jung Hyo Sun, an academic researcher at INSEAD in France.
+I was hoping to access archival data of public pages such as McDonalds, BurgerKing, and etc. to figure out their uploading patterns. My primary concern is regarding
+- when the page was created
+- when the first posting was uploaded
+It would be great if I an permitted to use an api for this.
+
+Asking for 'Instagram Public Content Access' and 'oembed read' was just a mistake, I am happy with basic authority.
+
+Sincerely,
+Jung Hyo Sun
+*/
+
+
 #library(devtools)
 #install_github("pablobarbera/Rfacebook/Rfacebook")
 library(Rfacebook)
